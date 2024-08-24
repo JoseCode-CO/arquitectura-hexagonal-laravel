@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -36,8 +37,20 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
-    }
 
+        // Ruta base donde se encuentran los archivos de rutas
+        $routesPath = base_path("src/BoundedContext/**/Infrastructure/routes");
+
+        foreach (File::allFiles($routesPath) as $routeFile) {
+            // Obtener el nombre del archivo sin la extensión
+            $type = pathinfo($routeFile->getFilename(), PATHINFO_FILENAME);
+
+            // Definir un prefijo basado en el nombre del archivo
+            Route::prefix($type)
+                ->middleware($type)  // Aplicar middleware basado en el nombre del archivo (asegúrate de que el middleware exista)
+                ->group($routeFile->getRealPath());
+        }
+    }
     /**
      * Configure the rate limiters for the application.
      *
