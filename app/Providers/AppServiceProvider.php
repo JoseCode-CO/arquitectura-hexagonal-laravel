@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadMigrationsFrom(
-            File::allFiles(base_path("src/BoudedContext/**/Infrastructure/migrations"))
+            File::allFiles(base_path("src/BoundedContext/**/Infrastructure/migrations"))
         );
     }
 }
